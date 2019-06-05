@@ -1,0 +1,245 @@
+/* Joshua Lester
+ * 6/4/19
+ * CS210
+ * Coding Assignment #8B
+ */
+
+public class Date {
+	private int year;
+	private int month;
+	private int day;
+	
+	//Constructors --------------------------------------------------
+	public Date(int year, int month, int day) {
+		exception(year, month, day);
+		this.year = year;
+		this.month = month;
+		this.day = day;
+	}
+	
+	public Date() {
+		this(1970, 1, 1);
+	}
+	
+	//Mutators ------------------------------------------------------
+	public void setDay(int x) {
+		exception(this.year, this.month, x);
+		this.day = x;
+	}
+	
+	public void setMonth(int x) {
+		exception(this.year, x, this.day);
+		this.month = x;
+	}
+	
+	public void setYear(int x) {
+		exception(x, this.month, this.day);
+		this.year = x;
+	}
+	
+	public void addDays(int days) {
+		for (int i = 1; i <= days; i++) {
+			this.day++;
+			if (this.day == this.daysInMonth()) {
+				this.month++;
+			}
+		}
+	}
+	
+	public void addWeeks(int weeks) {
+		for (int i = 1; i <= weeks*7; i++) {
+			this.day++;
+			if (this.day == this.daysInMonth()) {
+				this.month++;
+				this.day=0;
+			}
+		}
+	}
+	
+	//Accessors ------------------------------------------------------
+	public int daysTo(Date other) {
+		return Date.daysTo(this, other);
+	}
+	
+	public int getDay() {
+		return this.day;
+	}
+	
+	public int getMonth() {
+		return this.month;
+	}
+	
+	public int getYear() {
+		return this.year;
+	}
+	
+	public static int daysTo(Date one, Date two)	{	
+		// Creating copies so I can edit them
+		Date max = new Date(one.max(two).year, one.max(two).month, one.max(two).day);
+		Date min = new Date(one.min(two).year, one.min(two).month, one.min(two).day);
+		int days = 0;
+		//
+		while (!(max.toString().equals(min.toString()))) {
+			if (max.day-1 == 0) {
+				if (max.month == 1) {
+					max.year--;
+					max.month = 12;
+					max.day = max.daysInMonth();
+					days--;
+					
+				} else {
+					max.month--;
+					max.day = max.daysInMonth();
+					days--;
+				}
+			} else {
+				days--;
+				max.day--;
+			}
+		}
+		//Making sure it returns the right sign (pos/neg)
+		if (one.max(two) == one) {
+			return days;
+		} else {
+			return -1*days;
+		}
+	}
+	// finds if it's a leap year
+	public boolean isLeapYear() {
+		if (this.year%4 == 0) {
+			if (this.year%400 == 0) {
+				return true;
+			} else if (this.year%100 == 0 && this.year%400 != 0) {
+				return false;
+			} else {
+				return true;
+			}
+		} else {
+			return false;
+		}
+	}
+	//converts to string
+	public String toString() {
+		if (this.month < 10 && this.day < 10) {
+			return this.year+"/0"+this.month+"/0"+this.day;
+		} else if (this.month >= 10 && this.day <10) {
+			return this.year+"/"+this.month+"/0"+this.day;
+		} else if (this.month < 10 && this.day >= 10) {
+			return this.year+"/0"+this.month+"/"+this.day;
+		} else {
+			return this.year+"/"+this.month+"/"+this.day;
+		}
+	}
+	//Long date method
+	public String longDate() {
+		if (this.month == 1) {
+			return "January "+this.day+", "+this.year;
+		} else if (this.month == 2) {
+			return "February "+this.day+", "+this.year;
+		}else if (this.month == 3) {
+			return "March "+this.day+", "+this.year;
+		}else if (this.month == 4) {
+			return "April "+this.day+", "+this.year;
+		}else if (this.month == 5) {
+			return "May "+this.day+", "+this.year;
+		}else if (this.month == 6) {
+			return "June "+this.day+", "+this.year;
+		}else if (this.month == 7) {
+			return "July "+this.day+", "+this.year;
+		}else if (this.month == 8) {
+			return "August "+this.day+", "+this.year;
+		}else if (this.month == 9) {
+			return "September "+this.day+", "+this.year;
+		}else if (this.month == 10) {
+			return "October "+this.day+", "+this.year;
+		}else if (this.month == 11) {
+			return "November "+this.day+", "+this.year;
+		}else {
+			return "December "+this.day+", "+this.year;
+		}
+	}
+	//make sure that the dates entered are correct
+	public void exception(int y, int m, int d) {
+		if (m > 12 || d > 31 || d > 30 && 
+				(m == 4 || m == 6 || m == 9 || m == 11) ||
+				(y%4==0)&&(m==2)&&(d > 29) ||
+				(y%4!=0)&&(m==2)&&(d > 28) || y<0 || m<0 || d<0) {
+			throw new IllegalArgumentException();
+		}
+	}
+	//Days in month finder
+	public int daysInMonth() {
+		if (this.month == 1) {
+			return 31;
+		} else if (this.month == 2) {
+			if (this.isLeapYear()) {
+				return 29;
+			} else {
+				return 28;
+			}
+		}else if (this.month == 3) {
+			return 31;
+		}else if (this.month == 4) {
+			return 30;
+		}else if (this.month == 5) {
+			return 31;
+		}else if (this.month == 6) {
+			return 30;
+		}else if (this.month == 7) {
+			return 31;
+		}else if (this.month == 8) {
+			return 31;
+		}else if (this.month == 9) {
+			return 30;
+		}else if (this.month == 10) {
+			return 31;
+		}else if (this.month == 11) {
+			return 30;
+		}else {
+			return 31;
+		}
+	}
+	// Used to find max date
+	public Date max(Date other) {
+		if (other.year - this.year < 0) {
+			return this;
+		} else if (this.year - other.year < 0) {
+			return other;
+		} else {
+			if (other.month - this.month < 0) {
+				return this;
+			} else if (this.month - other.month < 0) {
+				return other;
+			} else {
+				if (other.day - this.day < 0) {
+					return this;
+				} else if (this.day - other.day < 0) {
+					return other;
+				}
+			}
+		}
+		return other;
+	}
+	//Find min date
+	public Date min(Date other) {
+		if (this.year-other.year < 0) {
+			return this;
+		} else if (other.year - this.year < 0) {
+			return other;
+		} else {
+			if (this.month-other.month < 0) {
+				return this;
+			} else if (other.month - this.month < 0) {
+				return other;
+			} else {
+				if (this.day-other.day < 0) {
+					return this;
+				} else if (other.day-this.day < 0) {
+					return other;
+				}
+			}
+		}
+		return other;
+	}
+	
+}
